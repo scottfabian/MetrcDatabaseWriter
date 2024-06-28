@@ -66,8 +66,6 @@ public class Program
         //run app
         var writer = serviceProvider.GetService<DatabaseWriter>()!;
 
-        writer.SyncMetrcData().GetAwaiter().GetResult();
-
         try
         {
             writer.SyncMetrcData().GetAwaiter().GetResult();
