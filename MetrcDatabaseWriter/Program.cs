@@ -68,31 +68,31 @@ public class Program
 
         writer.SyncMetrcData().GetAwaiter().GetResult();
 
-        //try
-        //{
-        //    writer.SyncMetrcData().GetAwaiter().GetResult();
-        //}
-        //catch (Exception ex)
-        //{
-        //    Log.Logger.Error(ex.Message);
+        try
+        {
+            writer.SyncMetrcData().GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            Log.Logger.Error(ex.Message);
 
-        //    if (ex.InnerException is not null)
-        //    {
-        //        Log.Logger.Error(ex.InnerException.Message);
+            if (ex.InnerException is not null)
+            {
+                Log.Logger.Error(ex.InnerException.Message);
 
-        //        if (ex.InnerException.StackTrace is not null)
-        //        {
-        //            Log.Logger.Error(ex.InnerException.StackTrace);
-        //        }             
-        //    }
+                if (ex.InnerException.StackTrace is not null)
+                {
+                    Log.Logger.Error(ex.InnerException.StackTrace);
+                }
+            }
 
-        //    if (ex.StackTrace is not null)
-        //    {
-        //        Log.Logger.Error(ex.StackTrace);
-        //    }
-        //}
+            if (ex.StackTrace is not null)
+            {
+                Log.Logger.Error(ex.StackTrace);
+            }
+        }
 
-        //serviceProvider.Dispose();
+        serviceProvider.Dispose();
         Log.CloseAndFlush();
     }    
 }

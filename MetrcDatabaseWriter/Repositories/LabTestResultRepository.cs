@@ -66,6 +66,8 @@ public class LabTestResultRepository : IRepository<LabTestResult>
 
     public void AddOrUpdate(List<LabTestResult> results)
     {
+        _logger.Information("Resolving database changes for {Entity}", typeof(LabTestResult).ToString());
+
         HashSet<int> uniqueResultIds = results.Select(x => x.LabTestResultId).ToHashSet();
 
         foreach (var id in uniqueResultIds)
@@ -75,6 +77,8 @@ public class LabTestResultRepository : IRepository<LabTestResult>
 
             AddOrUpdateSubset(resultsForId, dbResults);
         }
+
+        _logger.Information("Done");
     }
 
     public void Remove(LabTestResult result) => _dbContext.LabTestResult.Remove(result);

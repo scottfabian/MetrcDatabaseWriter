@@ -48,6 +48,8 @@ public class FacilityRepository : IRepository<Facility>
 
     public void AddOrUpdate(List<Facility> facilities)
     {
+        _logger.Information("Resolving database changes for {Entity}", typeof(Facility).ToString());
+
         HashSet<string> uniqueLicensesInResults = facilities.Select(x => x.LicenseNumber).ToHashSet();
         List<Facility> dbFacilities = _dbContext.Facility.Where(f => uniqueLicensesInResults.Contains(f.LicenseNumber)).ToList();
 
@@ -57,6 +59,8 @@ public class FacilityRepository : IRepository<Facility>
 
             AddOrUpdate(f, dbMatch);
         }
+
+        _logger.Information("Done");
     }
 
     public void Remove(Facility entity) => _dbContext.Facility.Remove(entity);

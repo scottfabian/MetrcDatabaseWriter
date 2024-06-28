@@ -50,6 +50,8 @@ public class MetrcModelRepository<T> : IRepository<T> where T : class, IMetrcMod
 
     public void AddOrUpdate(List<T> entities)
     {
+        _logger.Information("Resolving database changes for {Entity}", typeof(T).ToString());
+
         HashSet<int> uniqueIdsInResults = entities.Select(x => x.Id).ToHashSet();
         List<T> dbRecords = _dbSet.Where(r => uniqueIdsInResults.Contains(r.Id)).ToList();
 
@@ -59,6 +61,8 @@ public class MetrcModelRepository<T> : IRepository<T> where T : class, IMetrcMod
 
             AddOrUpdate(e, dbMatch);
         }
+
+        _logger.Information("Done");
     }
 
     private void AddOrUpdateSubset(List<T> newEntities, List<T> dbEntities)
