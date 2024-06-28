@@ -1,7 +1,7 @@
 ﻿using MetrcAPIService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http;
+using Serilog;
 
 namespace MetrcDatabaseWriter;
 
@@ -48,6 +48,15 @@ public class Program
         });
         serviceCollection.AddSingleton<DataGatherer>();
         serviceCollection.AddSingleton<DatabaseWriter>();
+        serviceCollection.AddSingleton<ILogger>(serviceProvider =>
+        {
+            IConfiguration _localConfig = serviceProvider.GetRequiredService<IConfiguration>();
+
+            Log.Logger = new LoggerConfiguration()
+                                .ReadFrom.Configuration(_localConfig)
+                                .CreateLogger();
+            return Log.Logger;
+        });
         //add other services
 
 

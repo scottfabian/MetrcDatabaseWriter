@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace MetrcDatabaseWriter;
 
@@ -6,11 +7,13 @@ public class MetrcModelRepository<T> : IRepository<T> where T : class, IMetrcMod
 {
     private readonly MetrcDbContext _dbContext;
     private DbSet<T> _dbSet;
+    private ILogger _logger;
 
-    public MetrcModelRepository(MetrcDbContext context)
+    public MetrcModelRepository(MetrcDbContext context, ILogger logger)
     {
         _dbContext = context;
         _dbSet = _dbContext.Set<T>();
+        _logger = logger;
     }
     
 
@@ -31,10 +34,12 @@ public class MetrcModelRepository<T> : IRepository<T> where T : class, IMetrcMod
 
     public void AddOrUpdate(IEnumerable<T> entities)
     {
+        _logger.Debug("Resolving {DbSet} database changes", typeof(T).ToString());
         foreach (var e in entities)
         {
             AddOrUpdate(e);
         }
+        _logger.Debug("Done");
     }
 
     public void Remove(T entity) => _dbSet.Remove(entity);

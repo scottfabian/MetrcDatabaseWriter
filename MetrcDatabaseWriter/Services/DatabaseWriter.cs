@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace MetrcDatabaseWriter;
 
@@ -23,22 +23,22 @@ public class DatabaseWriter
 
 
 
-    public DatabaseWriter(IConfiguration config, DataGatherer gatherer, MetrcDbContext dbContext)
+    public DatabaseWriter(IConfiguration config, DataGatherer gatherer, MetrcDbContext dbContext, ILogger logger)
     {
         _config = config;
         _gatherer = gatherer;
         _targetFacilities = _config.GetSection("Metrc:FacilityLicense").Get<List<string>>()!;
         _connectionString = _config["ConnectionStrings:SqlConnection"]!;
         _dbContext = dbContext;
-        //_logger = logger;
+        _logger = logger;
 
-        _packageRepository = new(dbContext);
-        _harvestRepository = new(dbContext);
-        _labTestTypeRepository = new(dbContext);
+        _packageRepository = new(dbContext, logger);
+        _harvestRepository = new(dbContext, logger);
+        _labTestTypeRepository = new(dbContext, logger);
         _facilityRepository = new(dbContext);
-        _labTestResultRepository = new(dbContext);
-        _strainRepository = new(dbContext);
-        _itemRepository = new(dbContext);
+        _labTestResultRepository = new(dbContext, logger);
+        _strainRepository = new(dbContext, logger);
+        _itemRepository = new(dbContext, logger);
 
 
         _facilities = PopulateFacilites().GetAwaiter().GetResult();
@@ -71,7 +71,7 @@ public class DatabaseWriter
         List<LabTestResult> testResultsRetrieved = new();
         List<Item> itemsRetrieved = new();
 
-
+        _logger.Debug("Retrieving MetrcData");
 
         foreach (var facility in _facilities)
         {
@@ -101,6 +101,7 @@ public class DatabaseWriter
 
         testResultsRetrieved = await _gatherer.GetLabTestResults(packagesRetrieved, testTypesRetrieved);
 
+        _logger.Debug("Cleaning up memory");
         //clean up memory
         packagesRetrieved.TrimExcess();
         harvestsRetrieved.TrimExcess();
@@ -113,6 +114,8 @@ public class DatabaseWriter
         //Package updatedPackage = packagesRetrieved.Where(x => x.Label == "1A40F0100000ED9000002788").First();
         //updatedPackage.SourceHarvestCount = 69;
 
+        _logger.Debug("Resolving changes with database");
+
         _facilityRepository.AddOrUpdate(_facilities);
         _itemRepository.AddOrUpdate(itemsRetrieved);
         _harvestRepository.AddOrUpdate(harvestsRetrieved);
@@ -121,9 +124,13 @@ public class DatabaseWriter
         _strainRepository.AddOrUpdate(strainsRetrieved);
         _packageRepository.AddOrUpdate(packagesRetrieved);
 
+        _logger.Debug("Saving changes to database");
+
         _dbContext.SaveChanges();
 
         _gatherer.Mapper.ClearModelCache();
+
+        _logger.Debug("Metrc data sync complete");
     }
 
 }

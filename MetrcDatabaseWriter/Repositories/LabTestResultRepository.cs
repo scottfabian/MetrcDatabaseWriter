@@ -1,13 +1,16 @@
-﻿
+﻿using Serilog;
+
 namespace MetrcDatabaseWriter;
 
 public class LabTestResultRepository : IRepository<LabTestResult>
 {
     private readonly MetrcDbContext _dbContext;
+    private ILogger _logger;
 
-    public LabTestResultRepository(MetrcDbContext context)
+    public LabTestResultRepository(MetrcDbContext context, ILogger logger)
     {
         _dbContext = context;
+        _logger = logger;
     }
 
 
@@ -32,10 +35,12 @@ public class LabTestResultRepository : IRepository<LabTestResult>
 
     public void AddOrUpdate(IEnumerable<LabTestResult> results)
     {
+        _logger.Debug("Resolving LabTestResult database changes");
         foreach (var r in results)
         {
             AddOrUpdate(r);
         }
+        _logger.Debug("Done");
     }
 
     public void Remove(LabTestResult result) => _dbContext.LabTestResult.Remove(result);
