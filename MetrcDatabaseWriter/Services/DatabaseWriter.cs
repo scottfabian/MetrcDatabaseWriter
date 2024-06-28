@@ -35,7 +35,7 @@ public class DatabaseWriter
         _packageRepository = new(dbContext, logger);
         _harvestRepository = new(dbContext, logger);
         _labTestTypeRepository = new(dbContext, logger);
-        _facilityRepository = new(dbContext);
+        _facilityRepository = new(dbContext, logger);
         _labTestResultRepository = new(dbContext, logger);
         _strainRepository = new(dbContext, logger);
         _itemRepository = new(dbContext, logger);

@@ -1,21 +1,23 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace MetrcDatabaseWriter;
 
 public class FacilityRepository : IRepository<Facility>
 {
+    private readonly ILogger _logger;
     private readonly MetrcDbContext _dbContext;
 
-    public FacilityRepository(MetrcDbContext context)
+    public FacilityRepository(MetrcDbContext context, ILogger logger)
     {
         _dbContext = context;
+        _logger = logger;
     }
 
 
-    public void Add(Facility entity) => _dbContext.Facility.Add(entity);
+    public void Add(Facility facility) => _dbContext.Facility.Add(facility);
 
-    public void Update(Facility entity, Facility dbTarget) => _dbContext.Entry(dbTarget).CurrentValues.SetValues(dbTarget);
+    public void Update(Facility facility, Facility dbTarget) => _dbContext.Entry(dbTarget).CurrentValues.SetValues(facility);
 
     public void AddOrUpdate(Facility facility)
     {
@@ -32,11 +34,28 @@ public class FacilityRepository : IRepository<Facility>
         }
     }
 
+    public void AddOrUpdate(Facility facility, Facility? dbTarget)
+    {
+        if (dbTarget is null)
+        {
+            Add(facility);
+        }
+        else if(!Equals(facility, dbTarget))
+        {
+            Update(facility, dbTarget);
+        }
+    }
+
     public void AddOrUpdate(List<Facility> facilities)
     {
+        HashSet<string> uniqueLicensesInResults = facilities.Select(x => x.LicenseNumber).ToHashSet();
+        List<Facility> dbFacilities = _dbContext.Facility.Where(f => uniqueLicensesInResults.Contains(f.LicenseNumber)).ToList();
+
         foreach (var f in facilities)
         {
-            AddOrUpdate(f);
+            Facility? dbMatch = dbFacilities.Where(x => x.LicenseNumber == f.LicenseNumber).FirstOrDefault();
+
+            AddOrUpdate(f, dbMatch);
         }
     }
 
