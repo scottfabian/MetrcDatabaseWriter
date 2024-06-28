@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Text.Json;
 
 namespace MetrcDatabaseWriter;
 
@@ -16,6 +17,9 @@ public class MetrcModelRepository<T> : IRepository<T> where T : class, IMetrcMod
         _logger = logger;
     }
     
+    public void Add(T entity) => _dbSet.Add(entity);
+
+    public void Update(T entity, T dbTarget) => _dbContext.Entry(dbTarget).CurrentValues.SetValues(entity);
 
     public void AddOrUpdate(T entity)
     {
@@ -32,19 +36,44 @@ public class MetrcModelRepository<T> : IRepository<T> where T : class, IMetrcMod
         }       
     }
 
-    public void AddOrUpdate(IEnumerable<T> entities)
+    public void AddOrUpdate(T source, T? dbTarget)
     {
-        _logger.Debug("Resolving {DbSet} database changes", typeof(T).ToString());
+        if (dbTarget is null)
+        {
+            Add(source);
+        }
+        else if (!Equals(source, dbTarget))
+        {
+            Update(source, dbTarget);
+        }
+    }
+
+    public void AddOrUpdate(List<T> entities)
+    {
+        HashSet<int> uniqueIdsInResults = entities.Select(x => x.Id).ToHashSet();
+        List<T> dbRecords = _dbSet.Where(r => uniqueIdsInResults.Contains(r.Id)).ToList();
+
         foreach (var e in entities)
         {
-            AddOrUpdate(e);
+            T? dbMatch = dbRecords.Where(x => x.Id == e.Id && x.FacilityLicense == e.FacilityLicense).FirstOrDefault();
+
+            AddOrUpdate(e, dbMatch);
         }
-        _logger.Debug("Done");
+    }
+
+    private void AddOrUpdateSubset(List<T> newEntities, List<T> dbEntities)
+    {
+        foreach (var e in newEntities)
+        {
+            T? dbMatch = _dbSet.Where(x => x.Id == e.Id).FirstOrDefault();
+
+            AddOrUpdate(e, dbMatch);
+        }
     }
 
     public void Remove(T entity) => _dbSet.Remove(entity);
 
-    public void Remove(IEnumerable<T> entities)
+    public void Remove(List<T> entities)
     {
         foreach (var e in entities)
         {

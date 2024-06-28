@@ -2,9 +2,11 @@
 
 public interface IRepository<T> where T : class
 {
-    void AddOrUpdate(IEnumerable<T> entities);
+    void Add(T entity);
+    void Update(T entity, T dbTarget);
+    void AddOrUpdate(List<T> entities);
     void AddOrUpdate(T entity);
     T? Find(params object[] keyValues);
-    void Remove(IEnumerable<T> entities);
+    void Remove(List<T> entities);
     void Remove(T entity);
 }

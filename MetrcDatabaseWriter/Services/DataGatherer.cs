@@ -1,5 +1,6 @@
 ﻿using MetrcAPIService;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace MetrcDatabaseWriter;
 
@@ -7,16 +8,18 @@ public class DataGatherer
 {
     private MetrcAPI _metrc;
     private IConfiguration _config;
+    private ILogger _logger;
     internal MetrcMapper Mapper = new();
     private Dictionary<string, string> compoundTypeMap = new Dictionary<string, string>();
     private delegate Task<T> MetrcGetActive<T>(int pageNumber);
     private delegate Task<T> MetrcGetActiveDateRange<T>(DateTime dStart, DateTime dEnd, int pageNumber);
     private delegate T MapDtos<T, U>(IEnumerable<U> enumerable, Facility facility);
 
-    public DataGatherer(MetrcAPI metrc, IConfiguration config)
+    public DataGatherer(MetrcAPI metrc, IConfiguration config, ILogger logger)
     {
         _metrc = metrc;
         _config = config;
+        _logger = logger;
     }
 
     public async Task<List<LabTestResult>> GetLabTestResults(List<Package> packages, List<LabTestType> testTypes)
@@ -252,6 +255,7 @@ public class DataGatherer
 
     private void HandleMetrcException(MetrcApiException ex)
     {
+
         Console.WriteLine($"Request Failed, status code {ex.StatusCode.ToString()}");
         Console.WriteLine(ex.RequestURI);
         Console.WriteLine(ex.Response);

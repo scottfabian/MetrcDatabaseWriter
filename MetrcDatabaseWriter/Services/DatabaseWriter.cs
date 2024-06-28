@@ -71,7 +71,7 @@ public class DatabaseWriter
         List<LabTestResult> testResultsRetrieved = new();
         List<Item> itemsRetrieved = new();
 
-        _logger.Debug("Retrieving MetrcData");
+        _logger.Information("Retrieving MetrcData");
 
         foreach (var facility in _facilities)
         {
@@ -93,15 +93,11 @@ public class DatabaseWriter
             testTypesRetrieved.AddRange(await testTypesTask);
             strainsRetrieved.AddRange(await strainsTask);
             itemsRetrieved.AddRange(await itemsTask);
-
-            // Augment packages with the obtained data
-
-
         }
 
         testResultsRetrieved = await _gatherer.GetLabTestResults(packagesRetrieved, testTypesRetrieved);
 
-        _logger.Debug("Cleaning up memory");
+        _logger.Information("Cleaning up memory");
         //clean up memory
         packagesRetrieved.TrimExcess();
         harvestsRetrieved.TrimExcess();
@@ -111,10 +107,8 @@ public class DatabaseWriter
         itemsRetrieved.TrimExcess();
         GC.Collect();
 
-        //Package updatedPackage = packagesRetrieved.Where(x => x.Label == "1A40F0100000ED9000002788").First();
-        //updatedPackage.SourceHarvestCount = 69;
 
-        _logger.Debug("Resolving changes with database");
+        _logger.Information("Resolving changes with database");
 
         _facilityRepository.AddOrUpdate(_facilities);
         _itemRepository.AddOrUpdate(itemsRetrieved);
@@ -124,13 +118,13 @@ public class DatabaseWriter
         _strainRepository.AddOrUpdate(strainsRetrieved);
         _packageRepository.AddOrUpdate(packagesRetrieved);
 
-        _logger.Debug("Saving changes to database");
+        _logger.Information("Saving changes to database");
 
         _dbContext.SaveChanges();
 
         _gatherer.Mapper.ClearModelCache();
 
-        _logger.Debug("Metrc data sync complete");
+        _logger.Information("Metrc data sync complete");
     }
 
 }

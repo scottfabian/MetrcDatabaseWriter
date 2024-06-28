@@ -12,6 +12,11 @@ public class FacilityRepository : IRepository<Facility>
         _dbContext = context;
     }
 
+
+    public void Add(Facility entity) => _dbContext.Facility.Add(entity);
+
+    public void Update(Facility entity, Facility dbTarget) => _dbContext.Entry(dbTarget).CurrentValues.SetValues(dbTarget);
+
     public void AddOrUpdate(Facility facility)
     {
         Facility? existingFacility = _dbContext.Facility.Find(facility.LicenseNumber);
@@ -27,7 +32,7 @@ public class FacilityRepository : IRepository<Facility>
         }
     }
 
-    public void AddOrUpdate(IEnumerable<Facility> facilities)
+    public void AddOrUpdate(List<Facility> facilities)
     {
         foreach (var f in facilities)
         {
@@ -37,7 +42,7 @@ public class FacilityRepository : IRepository<Facility>
 
     public void Remove(Facility entity) => _dbContext.Facility.Remove(entity);
 
-    public void Remove(IEnumerable<Facility> facilities)
+    public void Remove(List<Facility> facilities)
     {
         foreach (var facility in facilities)
         {
@@ -49,4 +54,5 @@ public class FacilityRepository : IRepository<Facility>
 
     public List<Facility> GetAll() => _dbContext.Facility.ToList();
 
+    
 }
