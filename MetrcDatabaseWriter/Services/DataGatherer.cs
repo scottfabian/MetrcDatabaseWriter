@@ -255,15 +255,14 @@ public class DataGatherer
 
     private void HandleMetrcException(MetrcApiException ex)
     {
-
-        Console.WriteLine($"Request Failed, status code {ex.StatusCode.ToString()}");
-        Console.WriteLine(ex.RequestURI);
-        Console.WriteLine(ex.Response);
+        _logger.Error("Request failed. Status code: {StatusCode}", ex.StatusCode);
+        _logger.Error("{RequestURI}", ex.RequestURI);
+        _logger.Error("{ResponseMessage}", ex.Response);
     }
 
     private void HandleDotNetException(Exception ex)
     {
-        throw new NotImplementedException();       
+        throw ex;     
     }
 
     #endregion Utilities
