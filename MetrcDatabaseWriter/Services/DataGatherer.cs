@@ -91,17 +91,37 @@ public class DataGatherer
 
     private async Task<List<T>> GetActiveDtos<T>(MetrcGetActive<GenericDataResponseDTO<T>> get, int pageNumber = 1)
     {
-        List<T> returnDtos = new();
+        List<T> returnDtos = new();   
 
-        GenericDataResponseDTO<T> response = await get(pageNumber);
-
-        returnDtos.AddRange(response.Data);
-
-        if (response.CurrentPage < response.TotalPages)
+        try
         {
-            pageNumber++;
+            GenericDataResponseDTO<T> response = await get(pageNumber);
+            returnDtos.AddRange(response.Data);
+
+            if (response.CurrentPage < response.TotalPages)
+            {
+                pageNumber++;
+                returnDtos.AddRange(await GetActiveDtos<T>(get, pageNumber));
+            }
+
+        }
+        catch (TooManyRequestsException ex)
+        {
+            HandleMetrcException(ex);
+            await Task.Delay(2000);
             returnDtos.AddRange(await GetActiveDtos<T>(get, pageNumber));
         }
+        catch (MetrcApiException ex)
+        {
+            HandleMetrcException(ex);
+            return new List<T>();
+        }
+        catch (Exception ex)
+        {
+            HandleDotNetException(ex);
+        }
+
+
 
 
         return returnDtos;
