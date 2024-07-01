@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog;
+using System.Text.Json;
 
 namespace MetrcDatabaseWriter;
 
@@ -104,9 +105,12 @@ public class DatabaseWriter
             testTypesRetrieved.AddRange(await testTypesTask);
             strainsRetrieved.AddRange(await strainsTask);
             itemsRetrieved.AddRange(await itemsTask);
+
+            testResultsRetrieved.AddRange(await _gatherer.GetLabTestResults(await packagesTask, testTypesRetrieved));
+
         }
 
-        testResultsRetrieved = await _gatherer.GetLabTestResults(packagesRetrieved, testTypesRetrieved);
+        
 
         _logger.Information("Cleaning up memory");
         //clean up memory
@@ -117,7 +121,6 @@ public class DatabaseWriter
         testResultsRetrieved.TrimExcess();
         itemsRetrieved.TrimExcess();
         GC.Collect();
-
 
         _logger.Information("Resolving changes with database");
 
