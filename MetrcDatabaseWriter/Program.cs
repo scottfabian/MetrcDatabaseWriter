@@ -88,7 +88,11 @@ public class Program
             {
                 Log.Logger.Error(ex.StackTrace);
             }
+
+            Console.ReadKey();
         }
+
+        Log.Logger.Information("Exiting application");
 
         serviceProvider.Dispose();
         Log.CloseAndFlush();

@@ -64,6 +64,17 @@ public class DatabaseWriter
 
     public async Task SyncMetrcData()
     {
+
+        _logger.Information("Checking connection to database...");
+
+        if (!CheckDatabaseConnection())
+        {
+            _logger.Error("Connection Failed. Check connection string and DatabaseWriteMode settings in appsettings.json");
+            return;
+        }
+
+        _logger.Information("Database connection successful");
+
         List<Package> packagesRetrieved = new();
         List<Harvest> harvestsRetrieved = new();
         List<LabTestType> testTypesRetrieved = new();
@@ -125,6 +136,11 @@ public class DatabaseWriter
         _gatherer.Mapper.ClearModelCache();
 
         _logger.Information("Metrc data sync complete");
+    }
+
+    private bool CheckDatabaseConnection()
+    {
+        return _dbContext.Database.CanConnect();
     }
 
 }
