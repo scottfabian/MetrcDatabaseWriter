@@ -90,23 +90,31 @@ public class DatabaseWriter
             _gatherer.SetFacilityLicense(facility.LicenseNumber);
 
             // Start all tasks concurrently
-            var harvestsTask = _gatherer.GetAllActiveHarvests(facility);
+            var harvestsTask = _gatherer.GetAllActiveHarvests(facility);         
             var packagesTask = _gatherer.GetAllActivePackages(facility);
             var testTypesTask = _gatherer.GetAllTestTypes(facility);
             var strainsTask = _gatherer.GetAllActiveStrains(facility);
             var itemsTask = _gatherer.GetAllActiveItems(facility);
 
+            var inactiveHarvestsTask = _gatherer.GetAllInactiveHarvests(facility);
+            var inactiveItemsTask = _gatherer.GetAllInactiveItems(facility);
+            var inactivePackagesTask = _gatherer.GetAllInActivePackages(facility);
+
+
             // Wait for all tasks to complete
-            await Task.WhenAll(harvestsTask, packagesTask, testTypesTask, strainsTask);
+            await Task.WhenAll(harvestsTask, packagesTask, testTypesTask, strainsTask, inactiveHarvestsTask);
 
             // Add the results to the respective collections
             harvestsRetrieved.AddRange(await harvestsTask);
+            harvestsRetrieved.AddRange(await inactiveHarvestsTask);
             packagesRetrieved.AddRange(await packagesTask);
+            packagesRetrieved.AddRange(await inactivePackagesTask);
             testTypesRetrieved.AddRange(await testTypesTask);
             strainsRetrieved.AddRange(await strainsTask);
             itemsRetrieved.AddRange(await itemsTask);
+            itemsRetrieved.AddRange(await inactiveItemsTask);
 
-            testResultsRetrieved.AddRange(await _gatherer.GetLabTestResults(await packagesTask, testTypesRetrieved));
+            testResultsRetrieved.AddRange(await _gatherer.GetLabTestResults(packagesRetrieved, testTypesRetrieved));
 
         }
 
@@ -132,7 +140,7 @@ public class DatabaseWriter
         _strainRepository.AddOrUpdate(strainsRetrieved);
         _packageRepository.AddOrUpdate(packagesRetrieved);
 
-        _logger.Information("Saving changes to database");
+        _logger.Information("Saving changes to database");       
 
         _dbContext.SaveChanges();
 

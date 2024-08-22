@@ -209,10 +209,24 @@ public class DataGatherer
         return await GetActiveModels<Harvest, HarvestDTO>(_metrc.GetActiveHarvests, Mapper.HarvestDTOs_Harvests, activeFacility, dStart, dEnd);
     }
 
+    public async Task<List<Harvest>> GetAllInactiveHarvests(Facility activeFacility)
+    {
+        DateTime dStart = CalculateStartDate();
+        DateTime dEnd = DateTime.Today.AddDays(1);
+
+        return await GetActiveModels<Harvest, HarvestDTO>(_metrc.GetInactiveHarvests, Mapper.HarvestDTOs_Harvests, activeFacility, dStart, dEnd);
+    }
+
     public async Task<List<Item>> GetAllActiveItems(Facility activeFacility, int pageNumber = 1)
     {
         return await GetActiveModels(_metrc.GetActiveItems, Mapper.ItemDTOs_Items, activeFacility, pageNumber);
     }
+
+    public async Task<List<Item>> GetAllInactiveItems(Facility activeFacility, int pageNumber = 1)
+    {
+        return await GetActiveModels(_metrc.GetInactiveItems, Mapper.ItemDTOs_Items, activeFacility, pageNumber);
+    }
+
 
     public async Task<List<Package>> GetAllActivePackages(Facility activeFacility)
     {
@@ -220,6 +234,14 @@ public class DataGatherer
         DateTime dEnd = DateTime.Today.AddDays(1);
 
         return await GetActiveModels(_metrc.GetActivePackages, Mapper.PackageDTOs_Packages, activeFacility, dStart, dEnd);
+    }
+
+    public async Task<List<Package>> GetAllInActivePackages(Facility activeFacility)
+    {
+        DateTime dStart = CalculateStartDate();
+        DateTime dEnd = DateTime.Today.AddDays(1);
+
+        return await GetActiveModels(_metrc.GetInactivePackages, Mapper.PackageDTOs_Packages, activeFacility, dStart, dEnd);
     }
 
     public async Task<List<Strain>> GetAllActiveStrains(Facility activeFacility, int pageNumber = 1)
