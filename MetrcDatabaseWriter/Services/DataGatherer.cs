@@ -112,7 +112,11 @@ public class DataGatherer : IDisposable
         List<T> returnDtos = new();
 
         GenericDataResponseDTO<T> response = await SendAndRetryMetrcRequest<T>(() => get(pageNumber));
-        returnDtos.AddRange(response.Data);
+
+        if (response.Data is not null)
+        {
+            returnDtos.AddRange(response.Data);
+        }      
 
         if (response.CurrentPage < response.TotalPages)
         {
@@ -162,7 +166,12 @@ public class DataGatherer : IDisposable
         List<T> dtos = new();
 
         GenericDataResponseDTO<T> response = await SendAndRetryMetrcRequest<T>(() => get(dStart, dEnd, pageNumber));
-        dtos.AddRange(response.Data);
+
+        if (response.Data is not null)
+        {
+            dtos.AddRange(response.Data);
+        }
+
 
         if (response.Page < response.TotalPages)
         {
