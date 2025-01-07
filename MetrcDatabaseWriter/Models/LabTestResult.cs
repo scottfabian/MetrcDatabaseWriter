@@ -11,11 +11,11 @@ public class LabTestResult
     public      string              SourcePackageLabel              { get; set; }
     public      string              ProductName                     { get; set; }
     public      string              ProductCategoryName             { get; set; }
-    public      string              CompoundName                    { get; set; }   // derived from Metrc Data
-    public      string              CompoundType                    { get; set; }   // derived from Metrc data
+    public      string?             CompoundName                    { get; set; }   // derived from Metrc Data
+    public      string?             CompoundType                    { get; set; }   // derived from Metrc data
     public      string?             TestBatchName                   { get; set; }   // derived from Metrc data
     public      double              TestResultLevel                 { get; set; }
-    public      string              ReportUnit                      { get; set; }   // derived from Metrc data
+    public      string?             ReportUnit                      { get; set; }   // derived from Metrc data
     public      string              TestTypeName                    { get; set; }
     public      bool                TestPassed                      { get; set; }
     public      string              TestComment                     { get; set; }

@@ -4,6 +4,7 @@ using MetrcDatabaseWriter;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MetrcDatabaseWriter.Migrations
 {
     [DbContext(typeof(MetrcSQLContext))]
-    partial class MetrcSQLContextModelSnapshot : ModelSnapshot
+    [Migration("20250107223226_AddNullable_LabTestResult_CompoundName-CompoundType")]
+    partial class AddNullable_LabTestResult_CompoundNameCompoundType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

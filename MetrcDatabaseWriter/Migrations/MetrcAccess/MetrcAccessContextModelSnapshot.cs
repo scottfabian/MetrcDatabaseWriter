@@ -590,11 +590,9 @@ namespace MetrcDatabaseWriter.Migrations.MetrcAccess
                         .HasAnnotation("Jet:ValueGenerationStrategy", JetValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("CompoundName")
-                        .IsRequired()
                         .HasColumnType("longchar");
 
                     b.Property<string>("CompoundType")
-                        .IsRequired()
                         .HasColumnType("longchar");
 
                     b.Property<DateTime?>("ExpirationDateTime")
@@ -632,7 +630,6 @@ namespace MetrcDatabaseWriter.Migrations.MetrcAccess
                         .HasColumnType("longchar");
 
                     b.Property<string>("ReportUnit")
-                        .IsRequired()
                         .HasColumnType("longchar");
 
                     b.Property<DateTime?>("ResultReleaseDateTime")
