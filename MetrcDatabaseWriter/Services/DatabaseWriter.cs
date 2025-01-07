@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog;
-using System.Text.Json;
 
 namespace MetrcDatabaseWriter;
 
@@ -90,6 +89,7 @@ public class DatabaseWriter
             _gatherer.SetFacilityLicense(facility.LicenseNumber);
 
             // Start all tasks concurrently
+            _logger.Debug("Retrieivng Package, Item, Harvest, and Strain data for Facility {FacilityLicense}", facility.LicenseNumber);
             var harvestsTask = _gatherer.GetAllActiveHarvests(facility);         
             var packagesTask = _gatherer.GetAllActivePackages(facility);
             var testTypesTask = _gatherer.GetAllTestTypes(facility);
@@ -114,7 +114,9 @@ public class DatabaseWriter
             itemsRetrieved.AddRange(await itemsTask);
             itemsRetrieved.AddRange(await inactiveItemsTask);
 
-            testResultsRetrieved.AddRange(await _gatherer.GetLabTestResults(packagesRetrieved, testTypesRetrieved));
+
+            _logger.Debug("Retrieving test result data...");
+            testResultsRetrieved.AddRange(await _gatherer.GetBatchPackageLabTestResults(packagesRetrieved, testTypesRetrieved));
 
         }
 
@@ -140,7 +142,7 @@ public class DatabaseWriter
         _strainRepository.AddOrUpdate(strainsRetrieved);
         _packageRepository.AddOrUpdate(packagesRetrieved);
 
-        _logger.Information("Saving changes to database");       
+        _logger.Information("Saving changes to database");
 
         _dbContext.SaveChanges();
 

@@ -20,7 +20,8 @@ public class MetrcAccessContext : MetrcDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseJet(_connectionString);
+        optionsBuilder.UseJet(_connectionString)
+            .EnableSensitiveDataLogging();
     }
 
 }

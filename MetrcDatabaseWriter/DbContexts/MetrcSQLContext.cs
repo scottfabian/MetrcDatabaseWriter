@@ -21,7 +21,8 @@ public class MetrcSQLContext : MetrcDbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(_connectionString,
-            options => options.EnableRetryOnFailure());
+            options => options.EnableRetryOnFailure())
+            .EnableSensitiveDataLogging();
     }
 
 }
