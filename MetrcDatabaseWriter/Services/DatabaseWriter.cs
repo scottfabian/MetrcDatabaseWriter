@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog;
+using System.Linq;
 
 namespace MetrcDatabaseWriter;
 
@@ -113,6 +114,27 @@ public class DatabaseWriter
             strainsRetrieved.AddRange(await strainsTask);
             itemsRetrieved.AddRange(await itemsTask);
             itemsRetrieved.AddRange(await inactiveItemsTask);
+
+
+
+            //HACKING TO FIT DEADLINE, MUST REFACTOR THIS
+            //Find items that are missing
+            HashSet<int> itemIds = itemsRetrieved.Select(x => x.Id).ToHashSet(); //item ids from endpoint
+
+            List<int> packageIdsWithMissingItems = packagesRetrieved.Where(x => 
+            {
+                if (x.ItemId is not null)
+                {
+                    return !itemIds.Contains((int)x.ItemId);
+                }
+                return false;
+            }).Select(x => x.Id).ToList();
+
+            List<Item> missingItemsToAdd = await _gatherer.GetItemsFromPackages(facility, packageIdsWithMissingItems);
+
+            itemsRetrieved.AddRange(missingItemsToAdd);
+
+            //HACKING TO FIT DEADLINE, MUST REFACTOR THIS
 
 
             _logger.Debug("Retrieving test result data...");

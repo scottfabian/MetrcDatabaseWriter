@@ -330,7 +330,22 @@ public class DataGatherer : IDisposable
         return await GetModels(_metrc.GetInactiveItems, Mapper.ItemDTOs_Items, activeFacility, pageNumber);
     }
 
-    //public async Task<List<Item>> GetItemsFromPackages(List<GenericDataResponseDTO<PackageDTO>> packageDtos, )
+    public async Task<List<Item>> GetItemsFromPackages(Facility activeFacility, List<int> packageIds)
+    {
+        //HACKING IN TO HIT DEADLINE, MUST REFACTOR
+        List<Item> missingItems = new();
+
+        foreach (var id in packageIds)
+        {
+            PackageDTO packageDTO = await _metrc.GetPackageByID(id.ToString());
+
+            Item item = Mapper.ItemDTO_Item(packageDTO.Item, activeFacility);
+
+            missingItems.Add(item);
+        }
+
+        return missingItems;
+    }
 
     public async Task<List<Package>> GetAllActivePackages(Facility activeFacility)
     {
