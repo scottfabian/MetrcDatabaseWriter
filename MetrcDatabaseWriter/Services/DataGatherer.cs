@@ -26,6 +26,7 @@ public class DataGatherer : IDisposable
     
     
     private int _retryDelay = 1000;
+    private int _retryDelayStep = 500;
 
 
     public DataGatherer(MetrcAPI metrc, IConfiguration config, ILogger logger)
@@ -224,7 +225,7 @@ public class DataGatherer : IDisposable
         catch (TooManyRequestsException ex)
         {
             MetrcExceptionThrown?.Invoke(ex);
-            int retryTimeMs = _retryDelay + (retryCount * 1000);
+            int retryTimeMs = _retryDelay + (retryCount * _retryDelayStep);
             await Task.Delay(retryTimeMs);
             return await SendAndRetryMetrcRequest(apiCall);
         }

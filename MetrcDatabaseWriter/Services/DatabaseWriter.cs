@@ -137,7 +137,7 @@ public class DatabaseWriter
             //HACKING TO FIT DEADLINE, MUST REFACTOR THIS
 
 
-            _logger.Debug("Retrieving test result data...");
+            _logger.Debug("Retrieving test result data for {PackageCount} packages...", packagesRetrieved.Count);
             testResultsRetrieved.AddRange(await _gatherer.GetBatchPackageLabTestResults(packagesRetrieved, testTypesRetrieved));
 
         }
