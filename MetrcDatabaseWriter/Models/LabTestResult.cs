@@ -50,6 +50,12 @@ public class LabTestResult
         }
 
         int firstParenIndex = TestTypeName.IndexOf('(');
+
+        if (firstParenIndex == -1)
+        {
+            return TestTypeName.Trim();
+        }
+
         string compoundName = TestTypeName.Substring(0, firstParenIndex);
 
         return compoundName.Trim();

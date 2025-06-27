@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetrcDatabaseWriter", "Metr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetrcAPIService", "..\MetrcAPIService\MetrcAPIService\MetrcAPIService.csproj", "{A26A692F-436E-4AA7-A447-3539A1C264A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FabToolKit", "..\..\My Libraries\FabToolKit\FabToolKit\FabToolKit.csproj", "{8378DA09-D3F1-D3CD-1075-44D308602D34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A26A692F-436E-4AA7-A447-3539A1C264A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A26A692F-436E-4AA7-A447-3539A1C264A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A26A692F-436E-4AA7-A447-3539A1C264A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8378DA09-D3F1-D3CD-1075-44D308602D34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8378DA09-D3F1-D3CD-1075-44D308602D34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8378DA09-D3F1-D3CD-1075-44D308602D34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8378DA09-D3F1-D3CD-1075-44D308602D34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
